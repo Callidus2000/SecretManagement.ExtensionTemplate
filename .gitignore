@@ -1,0 +1,22 @@
+﻿
+# ignore the settings folder and files for VSCode and PSS
+.vscode/*
+*.psproj
+*TempPoint*
+
+# Ignore staging info from Visual Studio
+library/SecretManagement.ExtensionTemplate/.vs/*
+library/SecretManagement.ExtensionTemplate/SecretManagement.ExtensionTemplate/bin/*
+library/SecretManagement.ExtensionTemplate/SecretManagement.ExtensionTemplate/obj/*
+
+# ignore PowerShell Studio MetaData
+SecretManagement.ExtensionTemplate/SecretManagement.ExtensionTemplate.psproj
+SecretManagement.ExtensionTemplate/SecretManagement.ExtensionTemplate.psproj.bak
+SecretManagement.ExtensionTemplate/SecretManagement.ExtensionTemplate.psprojs
+SecretManagement.ExtensionTemplate/SecretManagement.ExtensionTemplate.psproj
+
+# ignore the TestResults
+TestResults/*
+
+# ignore the publishing Directory
+publish/*

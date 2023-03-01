@@ -36,8 +36,8 @@ function Test-SecretVault {
         $AdditionalParameters = $vault.VaultParameters | ConvertTo-PSFHashtable
     }
     $vaultName = $vault.Name
-    if ($vault.ModuleName -ne 'SecretManagement.NetwrixPasswordSecure') {
-        Write-PSFMessage -Level Error "$vaultName was found but is not a NetwrixPasswordSecure Vault."
+    if ($vault.ModuleName -ne 'SecretManagement.þnameþ') {
+        Write-PSFMessage -Level Error "$vaultName was found but is not a þnameþ Vault."
         return $false
     }
 

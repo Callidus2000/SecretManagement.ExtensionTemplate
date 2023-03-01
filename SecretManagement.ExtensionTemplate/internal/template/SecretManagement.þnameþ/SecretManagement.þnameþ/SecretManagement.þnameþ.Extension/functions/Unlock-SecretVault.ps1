@@ -39,9 +39,8 @@
         $AdditionalParameters=$vault.VaultParameters|ConvertTo-PSFHashtable
     }
     $vaultName = $vault.Name
-    Write-PSFMessage "Hubba"
-    if ($vault.ModuleName -ne 'SecretManagement.NetwrixPasswordSecure') {
-        Write-PSFMessage -Level Error "$vaultName was found but is not a NetwrixPasswordSecure Vault."
+    if ($vault.ModuleName -ne 'SecretManagement.þnameþ') {
+        Write-PSFMessage -Level Error "$vaultName was found but is not a þnameþ Vault."
         return $false
     }
     Set-Variable -Name "Vault_${vaultName}_MasterPassword" -Scope Script -Value $Password -Force

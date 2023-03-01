@@ -6,17 +6,17 @@ Insert any build steps you may need to take before publishing it here.
 #>
 param (
 	$ApiKey,
-	
+
 	$WorkingDirectory,
-	
+
 	$Repository = 'PSGallery',
-	
+
 	[switch]
 	$LocalRepo,
-	
+
 	[switch]
 	$SkipPublish,
-	
+
 	[switch]
 	$AutoVersion
 )
@@ -34,6 +34,8 @@ if (-not $WorkingDirectory) { $WorkingDirectory = Split-Path $PSScriptRoot }
 #endregion Handle Working Directory Defaults
 
 # Prepare publish folder
+Write-PSFMessage -Level Important -Message "Compiling the template"
+& $PSScriptRoot\compile-Template.ps1
 Write-PSFMessage -Level Important -Message "Creating and populating publishing directory"
 $publishDir = New-Item -Path $WorkingDirectory -Name publish -ItemType Directory -Force
 Copy-Item -Path "$($WorkingDirectory)\SecretManagement.ExtensionTemplate" -Destination $publishDir.FullName -Recurse -Force
@@ -46,7 +48,7 @@ $processed = @()
 foreach ($filePath in (& "$($PSScriptRoot)\..\SecretManagement.ExtensionTemplate\internal\scripts\preimport.ps1"))
 {
 	if ([string]::IsNullOrWhiteSpace($filePath)) { continue }
-	
+
 	$item = Get-Item $filePath
 	if ($item.PSIsContainer) { continue }
 	if ($item.FullName -in $processed) { continue }
@@ -66,7 +68,7 @@ Get-ChildItem -Path "$($publishDir.FullName)\SecretManagement.ExtensionTemplate\
 foreach ($filePath in (& "$($PSScriptRoot)\..\SecretManagement.ExtensionTemplate\internal\scripts\postimport.ps1"))
 {
 	if ([string]::IsNullOrWhiteSpace($filePath)) { continue }
-	
+
 	$item = Get-Item $filePath
 	if ($item.PSIsContainer) { continue }
 	if ($item.FullName -in $processed) { continue }

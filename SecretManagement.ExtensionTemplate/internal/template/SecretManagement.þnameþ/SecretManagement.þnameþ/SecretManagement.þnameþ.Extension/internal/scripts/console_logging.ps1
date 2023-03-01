@@ -1,5 +1,4 @@
-﻿# TODO Alternative logging to be created
-Write-PSFMessage "Configure Console Logging"
+﻿Write-PSFMessage "Configure Console Logging"
 if (Get-PSFConfigValue -FullName 'SecretManagement.þnameþ.Extension.ConsoleLogging.enabled' -Fallback $false) {
     $providerParam=@{
         Name="console"

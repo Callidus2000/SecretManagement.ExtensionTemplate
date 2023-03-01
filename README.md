@@ -113,7 +113,8 @@ The releases are published in the Powershell Gallery, therefor it is quite simpl
 - Unterscheiden zwischen installierter und Dev-Nutzung (config.ps1)
 - $AdditionalParameters = @{} + $AdditionalParameters
 - Wait-PSFMessage before throw
-- 
+- RSSession
+- Dedicated Console Appender
 
 ## Register a Secret Vault
 To interact with a password server you have to register it as a SecretVault. For this task you've got multiple possibilities, ordered from "Simple, but non customizable" to "You have to know what you are doing, but then you may configure the weirdest scenarios".

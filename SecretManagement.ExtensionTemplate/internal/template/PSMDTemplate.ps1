@@ -1,10 +1,10 @@
 ﻿@{
-	TemplateName         = "module"
-	Version              = ([Version]"1.1.1.0")
+	TemplateName         = "SecretManagement.Extension"
+	# Version              = ([Version]"1.1.1.0")
 	AutoIncrementVersion = $true
 	Tags                 = 'module', 'psframework'
-	Author               = 'Friedrich Weinmann'
-	Description          = 'PowerShell Framework based module scaffold'
+	Author               = 'Sascha Spiekermann'
+	Description          = 'Extension module for Secret Management.'
 	Exclusions           = @("PSMDInvoke.ps1", ".PSMDDependency") # Contains list of files - relative path to root - to ignore when building the template
 	Scripts              = @{
 		guid         = {

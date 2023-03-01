@@ -1,4 +1,4 @@
-﻿function Register-þnameþSecureVault {
+﻿function Register-þfunctionPrefixþSecureVault {
     <#
     .SYNOPSIS
     Registers a new Secretvault.

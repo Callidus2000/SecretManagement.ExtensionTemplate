@@ -10,6 +10,12 @@
 		guid         = {
 			[System.Guid]::NewGuid().ToString()
 		}
+		guidRootModule         = {
+			[System.Guid]::NewGuid().ToString()
+		}
+		guidExtension         = {
+			[System.Guid]::NewGuid().ToString()
+		}
 		date         = {
 			Get-Date -Format "yyyy-MM-dd"
 		}
@@ -24,6 +30,9 @@
 		}
 		psframework          = {
 			(Get-Module PSFramework).Version.ToString()
+		}
+		secretManagementVersion          = {
+			(Get-Module Microsoft.Powershell.SecretManagement).Version.ToString()
 		}
 		testfolder   = {
 

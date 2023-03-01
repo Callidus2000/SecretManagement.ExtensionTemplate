@@ -6,17 +6,17 @@ Insert any build steps you may need to take before publishing it here.
 #>
 param (
 	$ApiKey,
-	
+
 	$WorkingDirectory,
-	
+
 	$Repository = 'PSGallery',
-	
+
 	[switch]
 	$LocalRepo,
-	
+
 	[switch]
 	$SkipPublish,
-	
+
 	[switch]
 	$AutoVersion
 )
@@ -46,7 +46,7 @@ $processed = @()
 foreach ($filePath in (& "$($PSScriptRoot)\..\þnameþ\internal\scripts\preimport.ps1"))
 {
 	if ([string]::IsNullOrWhiteSpace($filePath)) { continue }
-	
+
 	$item = Get-Item $filePath
 	if ($item.PSIsContainer) { continue }
 	if ($item.FullName -in $processed) { continue }
@@ -58,6 +58,10 @@ foreach ($filePath in (& "$($PSScriptRoot)\..\þnameþ\internal\scripts\preimpor
 Get-ChildItem -Path "$($publishDir.FullName)\þnameþ\internal\functions\" -Recurse -File -Filter "*.ps1" | ForEach-Object {
 	$text += [System.IO.File]::ReadAllText($_.FullName)
 }
+Get-ChildItem -Path "$($publishDir.FullName)\SecretManagement.þnameþ\SecretManagement.þnameþ.Extension\functions.sharedinternal\" -Recurse -File -Filter "*.ps1" | ForEach-Object {
+	$text += [System.IO.File]::ReadAllText($_.FullName)
+	Write-PSFMessage -Level Verbose -Message " #3 Importing content from $($_.FullName)"
+}
 Get-ChildItem -Path "$($publishDir.FullName)\þnameþ\functions\" -Recurse -File -Filter "*.ps1" | ForEach-Object {
 	$text += [System.IO.File]::ReadAllText($_.FullName)
 }
@@ -66,7 +70,7 @@ Get-ChildItem -Path "$($publishDir.FullName)\þnameþ\functions\" -Recurse -File
 foreach ($filePath in (& "$($PSScriptRoot)\..\þnameþ\internal\scripts\postimport.ps1"))
 {
 	if ([string]::IsNullOrWhiteSpace($filePath)) { continue }
-	
+
 	$item = Get-Item $filePath
 	if ($item.PSIsContainer) { continue }
 	if ($item.FullName -in $processed) { continue }

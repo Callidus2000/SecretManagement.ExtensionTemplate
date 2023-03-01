@@ -29,27 +29,19 @@
         [string] $VaultName,
         [hashtable] $AdditionalParameters
     )
-
+    # Workaround CaseSensitive HashTable
     $AdditionalParameters = @{} + $AdditionalParameters
 
     Write-PSFMessage "Unlocking SecretVault $VaultName, AdditionalParameters=$($AdditionalParameters|ConvertTo-Json -Compress)"
     $vault = Get-SecretVault $VaultName -ErrorAction Stop
-    Write-PSFMessage "Vault= $($vault|ConvertTo-Json -Compress)"
-    if(-not $AdditionalParameters){
-        $AdditionalParameters=$vault.VaultParameters|ConvertTo-PSFHashtable
-    }
-    $vaultName = $vault.Name
     if ($vault.ModuleName -ne 'SecretManagement.þnameþ') {
         Write-PSFMessage -Level Error "$vaultName was found but is not a þnameþ Vault."
+        Wait-PSFMessage
         return $false
     }
-    Set-Variable -Name "Vault_${vaultName}_MasterPassword" -Scope Script -Value $Password -Force
-    #Force a reconnection
-    Remove-Variable -Name "Vault_${vaultName}" -Scope Script -Force -ErrorAction SilentlyContinue
-    if (-not (Test-SecretVault -VaultName $vaultName -AdditionalParameters $AdditionalParameters)) {
-        Write-PSFMessage -Level Error "${vaultName}: Failed to unlock the vault"
-        return $false
-    }
-    Write-PSFMessage "SecretVault $vault unlocked successfull"
+    # TODO Should the master password be cached?
+    # Set-Variable -Name "Vault_${vaultName}_MasterPassword" -Scope Script -Value $Password -Force
+
+    # TODO Perform the connection voodoo ;-)
     return $true
 }

@@ -33,10 +33,12 @@
         [string] $VaultName,
         [hashtable] $AdditionalParameters
     )
+    # Workaround CaseSensitive HashTable
     $AdditionalParameters = @{} + $AdditionalParameters
     if ($AdditionalParameters.Verbose) { $VerbosePreference = 'continue' }
 
     Write-PSFMessage "Get-SecretInfo, Filter=$Filter, $VaultName, AdditionalParameters=$($AdditionalParameters|ConvertTo-Json -Compress)"
     return Get-NetwrixContainer -Filter $Filter -VaultName $VaultName -AdditionalParameters $AdditionalParameters -ReturnType SecretInformation
+    # TODO Perform update voodoo ;-)
 }
 

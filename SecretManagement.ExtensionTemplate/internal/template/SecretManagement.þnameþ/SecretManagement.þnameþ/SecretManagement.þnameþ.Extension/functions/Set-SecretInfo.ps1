@@ -41,11 +41,10 @@
         [string] $VaultName,
         [hashtable] $AdditionalParameters
     )
+    # Workaround CaseSensitive HashTable
     $AdditionalParameters = @{} + $AdditionalParameters
     if ($AdditionalParameters.Verbose) { $VerbosePreference = 'continue' }
-    $updateParam = $PSBoundParameters | ConvertTo-PSFHashtable -ReferenceCommand "Update-NetwrixContainer"
-    Write-PSFMessage "#Setting secretInfo with `$updateParam=$($updateParam|ConvertTo-Json -Compress)"
-    Update-NetwrixContainer @updateParam
+    # TODO Perform update voodoo ;-)
     Wait-PSFMessage
     return $true
 }

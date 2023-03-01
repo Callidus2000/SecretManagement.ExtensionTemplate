@@ -26,8 +26,9 @@
         [string] $VaultName,
         [hashtable] $AdditionalParameters
     )
+    # Workaround CaseSensitive HashTable
+    $AdditionalParameters = @{} + $AdditionalParameters
 
-    Remove-Variable -Name "Vault_${vaultName}_MasterPassword" -Scope Script -Force -ErrorAction SilentlyContinue
-    #Force a reconnection
-    Remove-Variable -Name "Vault_${vaultName}" -Scope Script -Force -ErrorAction SilentlyContinue
+    # TODO Add your specific disconnection commands, e.g. removing the stored master password
+    # Remove-Variable -Name "Vault_${vaultName}_MasterPassword" -Scope Script -Force -ErrorAction SilentlyContinue
 }

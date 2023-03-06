@@ -3,7 +3,7 @@
 	RootModule = 'SecretManagement.ExtensionTemplate.psm1'
 
 	# Version number of this module.
-	ModuleVersion = '1.0.0'
+	ModuleVersion = '1.0.1'
 
 	# ID used to uniquely identify this module
 	GUID = '4cf7f6df-4836-4a54-97bc-0b2d9ec45de1'

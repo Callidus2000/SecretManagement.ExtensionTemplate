@@ -51,7 +51,10 @@ PowerShellVersion = '5.0'
 # ProcessorArchitecture = ''
 
 # Modules that must be imported into the global environment prior to importing this module
-RequiredModules = @(@{ModuleName = 'PSFramework'; ModuleVersion = '1.7.249'; })
+RequiredModules = @(
+	@{ModuleName = 'PSFramework'; ModuleVersion = '1.7.249'; }
+	@{ModuleName = 'PSModuleDevelopment'; ModuleVersion = '2.2.11'; }
+	)
 
 # Assemblies that must be loaded prior to importing this module
 # RequiredAssemblies = @()

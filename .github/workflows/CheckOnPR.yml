@@ -58,6 +58,20 @@ jobs:
       with:
         mode: release
         releaseVersion: ${{ steps.gitversion.outputs.SemVer }}
+    - name: Update PowerShell Metadata
+      run: |
+        $updateParam=@{
+          path= (Join-Path (Get-Location).path "${{ env.MODULENAME }}" "${{ env.MODULENAME }}.psd1")
+          moduleVersion="${{ steps.gitversion.outputs.MajorMinorPatch }}"
+          copyright="(c) $(Get-Date -Format 'yyyy') Sascha Spiekermann"
+          releaseNotes= "${{ steps.changelog.outputs.releasenotes }}"
+          # functionsToExportPath: src\public
+          description= "${{ steps.metadata.outputs.description }}"
+        }
+        @($updateParam.keys) | Foreach-Object { 
+          if (-not $updateParam[$_]) { $updateParam.Remove($_) } 
+        }
+        Update-ModuleManifest @updateParam
     # - name: Update PowerShell Metadata
     #   uses: natescherer/update-powershell-metadata-action@v2
     #   with:

@@ -97,9 +97,10 @@ jobs:
         target_branch: ${{ github.base_ref }}
         github_token: ${{ github.token }}
     - name: Build and publish
-      run: .\build\vsts-build.ps1 -ApiKey $env:APIKEY
       env:
         APIKEY: ${{ secrets.ApiKey }}
+      if: ${{ env.APIKEY != '' }}
+      run: .\build\vsts-build.ps1 -ApiKey $env:APIKEY
 
     # - name: Merge master back to dev
     #   run: |

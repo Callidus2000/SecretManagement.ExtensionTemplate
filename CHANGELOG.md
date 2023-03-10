@@ -9,9 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - test\Start-þnameþRunspace.ps1  
  Helper for starting a new runspace with the current development state
 - Working example code in basic functions
+- Added RestartableSession to the RequiredModules
 ### Changed
 - Search'n'Replace of þnameþ against long versions
-
+- README.md expanded a lot
 ## [1.0.3] - 2023-03-06
 ### Fixed
  - Missing dependency to PSModuleDelopment added

@@ -83,9 +83,15 @@ This Powershell Module is a template for building your own extension to the [Mic
 ### Built With
 
 * [PSModuleDevelopment](https://github.com/PowershellFrameworkCollective/PSModuleDevelopment)
-* [psframework](https://github.com/PowershellFrameworkCollective/psframework)
+* [PSFramework](https://github.com/PowershellFrameworkCollective/psframework)
+* [RestartableSession](https://github.com/mdgrs-mei/RestartableSession)
 
 Without Fred's PSModuleDevelopment module neither the Netwrix nor this module would have been created. This module uses his templating engine and contains a mixture of two already existing templates.
+
+The **RestartableSession** module is a special case: I've added it to the required modules list even the module itself does not need it.
+Why?
+Without it I'd never survived the debugging madness of the multi-runspace-model of SecretManagement itself. And I've included this as a best practice in the template for you. Trust me, it's invaluable.
+
 
 <!-- GETTING STARTED -->
 # Getting Started
@@ -109,15 +115,25 @@ If you want to create a new module for (fictional) the password solution OctoPas
 Invoke-SMETemplate -NewExtensionName OctoPass  -FunctionPrefix OP
 ```
 
-As a result you now have the sub directory 'SecretManagement.OctoPass' which contains an extension module suitable for SecretManagement.
+As a result you now have the sub directory 'SecretManagement.OctoPass' which contains an extension module suitable for SecretManagement. If not already done I'd advise to read [the official documentation](https://github.com/PowerShell/SecretManagement), especially [about the architecture](https://github.com/PowerShell/SecretManagement/blob/master/Docs/ARCHITECTURE.md). If possible I'd like to not copy basic info to this readme.
 
-## Special included workarounds
+# Special included workarounds
+Some of the characteristics of the module can send you to the madhouse faster than you would like. A few of them are minor nuisance which has to be known, others are rather nightmares which haunt your whole development session.
+
+The following chapters describe the problems and how either
+- Is dealt with in the template,
+- can be avoided in the developing phase or
+- you yourself can avoid while implementing the backend code
+
+dsdf
+
 - Shared internal functions
 - Unterscheiden zwischen installierter und Dev-Nutzung (config.ps1)
 - $AdditionalParameters = @{} + $AdditionalParameters
 - Wait-PSFMessage before throw
 - RSSession
 - Dedicated Console Appender
+- get
 
 
 <!-- ROADMAP -->
@@ -163,8 +179,8 @@ Project Link: [https://github.com/Callidus2000/SecretManagement.ExtensionTemplat
 <!-- ACKNOWLEDGEMENTS -->
 # Acknowledgements
 
-* [Friedrich Weinmann](https://github.com/FriedrichWeinmann) for his marvelous [PSModuleDevelopment](https://github.com/PowershellFrameworkCollective/PSModuleDevelopment) and [psframework](https://github.com/PowershellFrameworkCollective/psframework)
-
+* [Friedrich Weinmann](https://github.com/FriedrichWeinmann) for his marvelous [PSModuleDevelopment](https://github.com/PowershellFrameworkCollective/PSModuleDevelopment) and [psframework](https://github.com/PowershellFrameworkCollective/psframework). My own extension and my template are build on base of his templates.
+* [mdgrs-mei](https://github.com/mdgrs-mei) for his invaluable [RestartableSession](https://github.com/mdgrs-mei/RestartableSession) module. Without it I'd never survived the debugging madness of the multi-runspace-model of SecretManagement itself. And that would have killed my module and this template directly in the beginning.
 
 
 

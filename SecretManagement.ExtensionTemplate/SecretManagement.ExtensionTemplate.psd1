@@ -30,7 +30,7 @@ CompanyName = 'MyCompany'
 Copyright = '(c) 2023 Sascha Spiekermann'
 
 # Description of the functionality provided by this module
-Description = 'No'
+Description = 'This module provides a template for easy creation of SecretManagement extensions'
 
 # Minimum version of the PowerShell engine required by this module
 PowerShellVersion = '5.0'
@@ -100,10 +100,10 @@ PrivateData = @{
         # Tags = @()
 
         # A URL to the license for this module.
-        # LicenseUri = ''
+        LicenseUri = 'https://github.com/Callidus2000/SecretManagement.ExtensionTemplate/blob/master/LICENSE'
 
         # A URL to the main website for this project.
-        # ProjectUri = ''
+        ProjectUri = 'https://github.com/Callidus2000/SecretManagement.ExtensionTemplate'
 
         # A URL to an icon representing this module.
         # IconUri = ''

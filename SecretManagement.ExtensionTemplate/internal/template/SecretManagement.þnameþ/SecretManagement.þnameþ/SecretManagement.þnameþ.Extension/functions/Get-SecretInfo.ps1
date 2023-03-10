@@ -38,7 +38,18 @@
     if ($AdditionalParameters.Verbose) { $VerbosePreference = 'continue' }
 
     Write-PSFMessage "Get-SecretInfo, Filter=$Filter, $VaultName, AdditionalParameters=$($AdditionalParameters|ConvertTo-Json -Compress)"
-    return Get-NetwrixContainer -Filter $Filter -VaultName $VaultName -AdditionalParameters $AdditionalParameters -ReturnType SecretInformation
-    # TODO Perform update voodoo ;-)
+    # TODO Perform Retrieval voodoo ;-) or just throw 'NotImplemented' if your vault does not support it
+    #region Change this code against something useful/more secret
+    Write-PSFMessage "Query Config 'SecretManagement.þnameþ.DummyImplmentation.SecretInfo.$Filter'"
+    $metaData = Get-PSFConfigValue -FullName "SecretManagement.þnameþ.DummyImplmentation.SecretInfo.$Filter" -Fallback (@{info = "This secret will evaporate with session closure" })
+    Write-PSFMessage "Found info $($info|ConvertTo-Json -Compress)"
+    Wait-PSFMessage
+    $info = [Microsoft.PowerShell.SecretManagement.SecretInformation]::new(
+        $filter, # Name of secret
+        [Microsoft.PowerShell.SecretManagement.SecretType]::PSCredential, # Secret data type [Microsoft.PowerShell.SecretManagement.SecretType]
+        $VaultName, # Name of vault
+        $metaData)
+    return $info
+    #endregion Change this code against something useful/more secret
 }
 

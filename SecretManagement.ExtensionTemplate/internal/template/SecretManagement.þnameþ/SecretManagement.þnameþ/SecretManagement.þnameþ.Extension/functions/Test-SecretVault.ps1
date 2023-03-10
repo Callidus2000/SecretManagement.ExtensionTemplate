@@ -31,6 +31,7 @@ function Test-SecretVault {
     if ($AdditionalParameters.Verbose) { $VerbosePreference = 'continue' }
     Write-PSFMessage  "Test-SecretVault from $VaultName, AdditionalParameters=$($AdditionalParameters|ConvertTo-Json -Compress)"
 
+    # TODO Perform some real world checks like opening the vault
     Write-PSFMessage -Level Verbose "SecretManagement: Testing Vault ${VaultName}"
     $vault = Get-SecretVault $VaultName -ErrorAction Stop
     if ($vault.ModuleName -ne 'SecretManagement.þnameþ') {
@@ -38,6 +39,5 @@ function Test-SecretVault {
         Wait-PSFMessage
         return $false
     }
-    # TODO Perform some testing voodoo ;-)
     return $true
 }

@@ -35,6 +35,12 @@
 
     Write-PSFMessage "Get-Secret, Name=$Name, $VaultName, AdditionalParameters=$($AdditionalParameters|ConvertTo-Json -Compress)"
     # TODO Perform Retrieval voodoo ;-)
+
+    #region Change this code against something useful/more secret
+    $secret=Get-PSFConfigValue -FullName "SecretManagement.þnameþ.DummyImplmentation.Secrets.$Name" -Fallback (ConvertTo-SecureString "Foo" -AsPlainText)
+    #endregion Change this code against something useful/more secret
+
+    # Example Code has to be removed!
     # $secret = Get-þfunctionPrefixþSecret
     # Write-PSFMessage "Found `$secret=$($secret.gettype())"
     # # Check if only one secret was retrieved

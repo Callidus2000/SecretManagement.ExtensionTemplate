@@ -33,6 +33,11 @@ function Remove-Secret {
         [string] $VaultName,
         [hashtable] $AdditionalParameters
     )
+    # Workaround CaseSensitive HashTable
+    $AdditionalParameters = @{} + $AdditionalParameters
+    if ($AdditionalParameters.Verbose) { $VerbosePreference = 'continue' }
+
+    # TODO add your dangerous code ;-) or keep removing unsupported
     throw "Not Implemented"
 }
 

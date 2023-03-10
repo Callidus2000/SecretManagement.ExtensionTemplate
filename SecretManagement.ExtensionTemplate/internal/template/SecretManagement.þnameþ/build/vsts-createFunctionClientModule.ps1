@@ -2,20 +2,20 @@
 <#
 	.SYNOPSIS
 		Build script that generates a client module for REST API endpoints of a Azure PowerShell Functions project.
-	
+
 	.DESCRIPTION
 		Build script that generates a client module for REST API endpoints of a Azure PowerShell Functions project.
-	
+
 	.PARAMETER ApiKey
 		The API key to use to publish the module to a Nuget Repository
-	
+
 	.PARAMETER WorkingDirectory
 		The root folder from which to build the module.
-	
+
 	.PARAMETER Repository
 		The name of the repository to publish to.
 		Defaults to PSGallery.
-	
+
 	.PARAMETER LocalRepo
 		Instead of publishing to a gallery, drop a nuget package in the root folder.
 		This package can then be picked up in a later step for publishing to Azure Artifacts.
@@ -23,34 +23,34 @@
 	.PARAMETER ModuleName
 		The name to give to the client module.
 		By default, the client module will be named '<ModuleName>.Client'.
-	
+
 	.PARAMETER IncludeFormat
 		Include the format xml of the source module for the client module.
-	
+
 	.PARAMETER IncludeType
 		Include the type extension xml of the source module for the client module.
-	
+
 	.PARAMETER IncludeAssembly
 		Include the binaries of the source module for the client module.
 #>
 param (
 	$ApiKey,
-	
+
 	$WorkingDirectory,
-	
+
 	$Repository = 'PSGallery',
-	
+
 	[switch]
 	$LocalRepo,
-	
+
 	$ModuleName,
-	
+
 	[switch]
 	$IncludeFormat,
-	
+
 	[switch]
 	$IncludeType,
-	
+
 	[switch]
 	$IncludeAssembly
 )
@@ -71,7 +71,7 @@ $parentModule = 'þnameþ'
 if (-not $ModuleName) { $ModuleName = 'þnameþ.Client' }
 Write-PSFMessage -Level Host -Message 'Creating Folder Structure'
 $workingRoot = New-Item -Path $WorkingDirectory -Name $ModuleName -ItemType Directory
-$publishRoot = Join-Path -Path $WorkingDirectory -ChildPath 'publish\þnameþ'
+$publishRoot = Join-Path -Path $WorkingDirectory -ChildPath 'publish\SecretManagement.þnameþ'
 Copy-Item -Path "$($WorkingDirectory)\azFunctionResources\clientModule\functions" -Destination "$($workingRoot.FullName)\" -Recurse
 Copy-Item -Path "$($WorkingDirectory)\azFunctionResources\clientModule\internal" -Destination "$($workingRoot.FullName)\" -Recurse
 Copy-Item -Path "$($publishRoot)\en-us" -Destination "$($workingRoot.FullName)\" -Recurse
@@ -86,7 +86,7 @@ foreach ($functionSourceFile in (Get-ChildItem -Path "$($publishRoot)\functions"
 {
 	Write-PSFMessage -Level Host -Message "  Processing function: $($functionSourceFile.BaseName)"
 	$condensedName = $functionSourceFile.BaseName -replace '-', ''
-	
+
 	#region Load Overrides
 	$override = @{ }
 	if (Test-Path -Path "$($WorkingDirectory)\azFunctionResources\functionOverride\$($functionSourceFile.BaseName).psd1")
@@ -102,7 +102,7 @@ foreach ($functionSourceFile in (Get-ChildItem -Path "$($publishRoot)\functions"
 		Write-PSFMessage -Level Host -Message "    Override 'NoClientFunction' detected, skipping!"
 		continue
 	}
-	
+
 	# If there is an definition override, use it and continue
 	if (Test-Path -Path "$($WorkingDirectory)\azFunctionResources\functionOverride\$($functionSourceFile.BaseName).ps1")
 	{
@@ -110,27 +110,27 @@ foreach ($functionSourceFile in (Get-ChildItem -Path "$($publishRoot)\functions"
 		Copy-Item -Path "$($WorkingDirectory)\azFunctionResources\functionOverride\$($functionSourceFile.BaseName).ps1" -Destination $functionFolder.FullName
 		continue
 	}
-	
+
 	# Figure out the Rest Method to use
 	$methodName = 'Post'
 	if ($override.RestMethods)
 	{
 		$methodName = $override.RestMethods | Where-Object { $_ -ne 'Get' } | Select-Object -First 1
 	}
-	
+
 	#endregion Load Overrides
-	
+
 	$currentFunctionsText = $functionsText -replace '%functionname%', $functionSourceFile.BaseName -replace '%condensedname%', $condensedName -replace '%method%', $methodName
-	
+
 	$parsedFunction = Read-PSMDScript -Path $functionSourceFile.FullName
 	$functionAst = $parsedFunction.Ast.EndBlock.Statements | Where-Object {
 		$_ -is [System.Management.Automation.Language.FunctionDefinitionAst]
 	} | Select-Object -First 1
-	
+
 	$end = $functionAst.Body.ParamBlock.Extent.EndOffSet
 	$start = $functionAst.Body.Extent.StartOffSet + 1
 	$currentFunctionsText = $currentFunctionsText.Replace('%parameter%', $functionAst.Body.Extent.Text.SubString(1, ($end - $start)))
-	
+
 	Write-PSFMessage -Level Host -Message "    Creating file: $($functionFolder.FullName)\$($functionSourceFile.Name)"
 	[System.IO.File]::WriteAllText("$($functionFolder.FullName)\$($functionSourceFile.Name)", $currentFunctionsText, $encoding)
 }
@@ -139,7 +139,7 @@ $functionsToExport = (Get-ChildItem -Path $functionFolder.FullName -Recurse -Fil
 
 #region Create Core Module Files
 # Get Manifest of published version, in order to catch build-phase changes such as module version.
-$originalManifestData = Import-PowerShellDataFile -Path "$publishRoot\þnameþ.psd1"
+$originalManifestData = Import-PowerShellDataFile -Path "$publishRoot\SecretManagement.þnameþ.psd1"
 $prereqHash = @{
 	ModuleName    = 'PSFramework'
 	ModuleVersion = (Get-Module PSFramework).Version

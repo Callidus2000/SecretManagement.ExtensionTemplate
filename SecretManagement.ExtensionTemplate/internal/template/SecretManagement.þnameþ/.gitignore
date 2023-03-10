@@ -5,9 +5,9 @@
 *TempPoint*
 
 # Ignore staging info from Visual Studio
-library/þnameþ/.vs/*
-library/þnameþ/þnameþ/bin/*
-library/þnameþ/þnameþ/obj/*
+library/SecretManagement.þnameþ/.vs/*
+library/SecretManagement.þnameþ/þnameþ/bin/*
+library/SecretManagement.þnameþ/þnameþ/obj/*
 
 # ignore PowerShell Studio MetaData
 þnameþ/þnameþ.psproj

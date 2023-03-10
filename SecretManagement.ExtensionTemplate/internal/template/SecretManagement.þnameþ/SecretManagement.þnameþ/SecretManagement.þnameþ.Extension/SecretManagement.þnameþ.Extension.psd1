@@ -1,6 +1,6 @@
 ﻿@{
 	# Script module or binary module file associated with this manifest
-	RootModule        = 'SecretManagement.þnameþ.psm1'
+	RootModule        = 'SecretManagement.þnameþ.Extension.psm1'
 
 	# Version number of this module.
 	ModuleVersion = '1.0.0'
@@ -30,16 +30,25 @@
 	)
 
 	# Assemblies that must be loaded prior to importing this module
-	# RequiredAssemblies = @('bin\þnameþ.dll')
+	# RequiredAssemblies = @('bin\SecretManagement.þnameþ.dll')
 
 	# Type files (.ps1xml) to be loaded when importing this module
-	# TypesToProcess = @('xml\þnameþ.Types.ps1xml')
+	# TypesToProcess = @('xml\SecretManagement.þnameþ.Types.ps1xml')
 
 	# Format files (.ps1xml) to be loaded when importing this module
-	# FormatsToProcess = @('xml\þnameþ.Format.ps1xml')
+	# FormatsToProcess = @('xml\SecretManagement.þnameþ.Format.ps1xml')
 
 	# Functions to export from this module
-	FunctionsToExport = ''
+	FunctionsToExport = @(
+		'Set-Secret'
+		'Set-SecretInfo'
+		'Get-Secret'
+		'Remove-Secret'
+		'Get-SecretInfo'
+		'Test-SecretVault'
+		'Unregister-SecretVault'
+		'Unlock-SecretVault'
+	)
 
 	# Cmdlets to export from this module
 	CmdletsToExport = ''

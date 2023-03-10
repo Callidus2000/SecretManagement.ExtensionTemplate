@@ -43,5 +43,6 @@
     # Set-Variable -Name "Vault_${vaultName}_MasterPassword" -Scope Script -Value $Password -Force
 
     # TODO Perform the connection voodoo ;-)
+    # Best Practise is e.g. to call Test-SecretVault which uses the cached master password for a test access of the vault
     return $true
 }

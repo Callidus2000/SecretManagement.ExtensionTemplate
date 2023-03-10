@@ -1,14 +1,14 @@
 ﻿param (
 	$TestGeneral = $true,
-	
+
 	$TestFunctions = $true,
-	
+
 	[ValidateSet('None', 'Normal', 'Detailed', 'Diagnostic')]
 	[Alias('Show')]
 	$Output = "None",
-	
+
 	$Include = "*",
-	
+
 	$Exclude = ""
 )
 
@@ -20,8 +20,8 @@ $global:testroot = $PSScriptRoot
 $global:__pester_data = @{ }
 
 Remove-Module þnameþ -ErrorAction Ignore
-Import-Module "$PSScriptRoot\..\þnameþ.psd1"
-Import-Module "$PSScriptRoot\..\þnameþ.psm1" -Force
+Import-Module "$PSScriptRoot\..\SecretManagement.þnameþ.psd1"
+Import-Module "$PSScriptRoot\..\SecretManagement.þnameþ.psm1" -Force
 
 # Need to import explicitly so we can use the configuration class
 Import-Module Pester
@@ -77,7 +77,7 @@ if ($TestFunctions)
 	{
 		if ($file.Name -notlike $Include) { continue }
 		if ($file.Name -like $Exclude) { continue }
-		
+
 		Write-PSFMessage -Level Significant -Message "  Executing $($file.Name)"
 		$config.TestResult.OutputPath = Join-Path "$PSScriptRoot\..\..\TestResults" "TEST-$($file.BaseName).xml"
 		$config.Run.Path = $file.FullName

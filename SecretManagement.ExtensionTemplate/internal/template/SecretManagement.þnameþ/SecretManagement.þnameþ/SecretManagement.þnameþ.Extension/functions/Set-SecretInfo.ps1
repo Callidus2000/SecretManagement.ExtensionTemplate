@@ -45,6 +45,10 @@
     $AdditionalParameters = @{} + $AdditionalParameters
     if ($AdditionalParameters.Verbose) { $VerbosePreference = 'continue' }
     # TODO Perform update voodoo ;-)
+    #region Change this code against something useful/more secret
+    Set-PSFConfig -Module 'SecretManagement.þnameþ' -Name "DummyImplmentation.SecretInfo.$Name" -Value $Metadata -Hidden
+    #endregion Change this code against something useful/more secret
+
     Wait-PSFMessage
     return $true
 }

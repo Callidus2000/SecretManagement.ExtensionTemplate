@@ -83,9 +83,15 @@ This Powershell Module is a template for building your own extension to the [Mic
 ### Built With
 
 * [PSModuleDevelopment](https://github.com/PowershellFrameworkCollective/PSModuleDevelopment)
-* [psframework](https://github.com/PowershellFrameworkCollective/psframework)
+* [PSFramework](https://github.com/PowershellFrameworkCollective/psframework)
+* [RestartableSession](https://github.com/mdgrs-mei/RestartableSession)
 
 Without Fred's PSModuleDevelopment module neither the Netwrix nor this module would have been created. This module uses his templating engine and contains a mixture of two already existing templates.
+
+The **RestartableSession** module is a special case: I've added it to the required modules list even the module itself does not need it.
+Why?
+Without it I'd never survived the debugging madness of the multi-runspace-model of SecretManagement itself. And I've included this as a best practice in the template for you. Trust me, it's invaluable.
+
 
 <!-- GETTING STARTED -->
 # Getting Started
@@ -109,15 +115,153 @@ If you want to create a new module for (fictional) the password solution OctoPas
 Invoke-SMETemplate -NewExtensionName OctoPass  -FunctionPrefix OP
 ```
 
-As a result you now have the sub directory 'SecretManagement.OctoPass' which contains an extension module suitable for SecretManagement.
+As a result you now have the sub directory 'SecretManagement.OctoPass' which contains an extension module suitable for SecretManagement. If not already done I'd advise to read [the official documentation](https://github.com/PowerShell/SecretManagement), especially [about the architecture](https://github.com/PowerShell/SecretManagement/blob/master/Docs/ARCHITECTURE.md). If possible I'd like to not copy basic info to this readme.
 
-## Special included workarounds
-- Shared internal functions
-- Unterscheiden zwischen installierter und Dev-Nutzung (config.ps1)
-- $AdditionalParameters = @{} + $AdditionalParameters
-- Wait-PSFMessage before throw
-- RSSession
-- Dedicated Console Appender
+# Special included workarounds
+Some of the characteristics of the module can send you to the madhouse faster than you would like. A few of them are minor nuisance which has to be known, others are rather nightmares which haunt your whole development session.
+
+The following chapters describe the problems and how either
+- Is dealt with in the template,
+- can be avoided in the developing phase or
+- you yourself can avoid while implementing the backend code
+
+## Dedicated Runspace
+[Described/Mentioned in the architecture overview](https://github.com/PowerShell/SecretManagement/blob/master/Docs/ARCHITECTURE.md#vault-extension-hosting) the biggest developing nightmare is introduced with one sentence:
+
+*Extension vault modules are hosted in a separate PowerShell runspace session that is separate from the current user PowerShell session.*
+
+This design principle may be required to achieve a few things but it causes a bunch of sub problems you need to know how to get worked with.
+
+### Displaying error messages / communicating with the end user
+As the functions of the new Extension do not run within the regular user runspace it is not guaranteed that Write-Host/-Debug etc. will reach the user. The template makes heavy use of `Write-PSFMessage`. This logging function has a many benefits, like
+- it works over multiple runspaces,
+- verbosity can be defined by the `-Level` parameter (Host/Verbose/Debug corresponding to the different `Write-*` functions),
+- the messages can be written to multiple destinations just by external configuration
+
+In the default configuration in the template all logging message will not only be displayed regularly (defined by verbosity) but also added to a logfile. To get the location of the logfiles type
+```Powershell
+Get-PSFConfigValue PSFramework.Logging.FileSystem.LogPath
+```
+If you are expecting a message to be written and it does not appear: Look at the logs, sometimes the SecretManagement runspace thing is a black hole which captures all...
+
+If you throw an exception and want to make sure that the message is delivered use the following snippet (adapted texts):
+```Powershell
+Write-PSFMessage -Level Error 'Multiple credentials found; Search with Get-SecretInfo and require the correct one by *.MetaData.id'
+Wait-PSFMessage   # Make sure the logging queue is flushed
+throw 'Multiple credentials found; Search with Get-SecretInfo and require the correct one by *.MetaData.id'
+```
+The template uses a specific console appender (configured in `SecretManagement.þnameþ\SecretManagement.þnameþ\SecretManagement.þnameþ.Extension\internal\scripts\console_logging.ps1`) which logs warnings or worse to the console. The `Wait-PSFMessage` makes sure that the logging queue is flushed (therefor the message is written before stopping the function with the exception).
+
+Shortest advice: **Stick to the PSFramework logging and ignore classic output functions**
+
+### Query input from the user
+As the architecture docs say *There is one shared component between the extension vault session and the current user session, and that is the PowerShell host (PSHost)*. To query e.g. the password for unlocking you could use
+```Powershell
+$password=$Host.ui.ReadLineAsSecureString()
+```
+Of course you could also use the `$host.UI.Write*` functions for output, but stay with the PSFMessage stuff, trust Fred an me ;-)
+
+### Importing again is not enough
+Normally, my developing cycle looks somewhat like this:
+```Powershell
+Import-Module MyModule.psd1 -Force
+# try something which does not work
+# fix/change the module code
+Import-Module MyModule.psd1 -Force
+# try again
+```
+As the vaults are configured with the path to the extension module and are contained in a different runspace, `Import-Module -Force` does not do the trick. You would need to start a new session and start all the initialization again. That's a black whole for workforce time...
+
+That is where the `RestartableSession` module comes to the rescue. If you're e.g. creating an extension for 'MyWarden' the following file is created:
+```Powershell
+#SecretManagement.MyWarden\test\Start-MyWardenRunspace.ps1
+
+
+[CmdletBinding()]
+param(
+    $VaultConfig = 'MyWardenDemo',
+    [switch]$NoWatcher
+)
+$vaultsParameter = @{
+    MyWardenDemo =
+    @{
+        vaultName = "MyWardenDemo"
+        server    = "localhost"
+        UserName  = $env:USERNAME
+        password  = ConvertTo-SecureString -AsPlainText -String "THIS_SHOULDBE_SWAPPED"  # Please use something else like 'Get-Credential' ;-)
+    }
+}
+Write-Host "`$PSScriptRoot=$PSScriptRoot"
+# $PSScriptRoot has to be provided as a parameter as it's not available in the scriptblock
+Enter-RSSession -OnStartArgumentList @($vaultsParameter.$VaultConfig, $PSScriptRoot) -onstart {
+    param($vaultParam,$PSSC)
+    $vp = $vaultParam
+    $vaultName = $vaultParam.vaultName
+    $myNewSecret = ConvertTo-SecureString "$(Get-Date)" -AsPlainText
+    [pscredential]$myNewCred = New-Object System.Management.Automation.PSCredential ('SomeUser', $myNewSecret)
+    Write-PSFMessage -Level Host "Rember: You can access the following default variables:"
+    Write-PSFMessage -Level Host (@{
+            '$vp'          = "Currently used vault config parameters"
+            '$vaultName'   = "The current configured vault"
+            '$myNewSecret' = "A new SecureString containing the current time"
+            '$myNewCred'   = "A new Credential using `$myNewSecret"
+        } | Format-Table -Wrap | Out-String)
+    $additionalParameter = $vaultParam | ConvertTo-PSFHashtable -Exclude vaultName, password
+    Write-PSFMessage "Register Vault $vaultName with additional parameters $($additionalParameter|ConvertTo-Json -Compress  )"
+    $modulePath = join-path (split-path $PSSC) "SecretManagement.MyWarden"
+    $manifestPath = Join-Path $modulePath "SecretManagement.MyWarden.psd1"
+    Write-PSFMessage "Using modulePath '$modulePath'"
+    Import-Module -force $manifestPath -Verbose
+    Register-SecretVault -Name $vaultName -ModuleName $manifestPath -VaultParameters $additionalParameter
+    Unlock-SecretVault -Name $vaultName -Password $vaultParam.password -Verbose
+    if ($NoWatcher) {
+        Write-PSFMessage -Level Host "Use 'Restart-RSSession' to restart  the session."
+    }
+    else {
+        Write-PSFMessage -Level Host "Any File Change within '$modulePath' will lead to a restart of the session."
+        Write-PSFMessage -Level Host "To disable this use 'Start-MyWardenRunspace.ps1 -NoWatcher'"
+        Start-RSRestartFileWatcher -Path "$modulePath" -IncludeSubdirectories
+    }
+    @(
+        "Example commands to test the new vault (for copy'n'paste)"
+        #TODO Fill in live names of already stored secret names ;-)
+        "# Get-Secret -Vault `$Vaultname -Name foo"
+        "# Get-Secret -Vault `$Vaultname -Name MyFirstPassword -Verbose"
+        "# Get-SecretInfo -Vault `$Vaultname -Name foo"
+        "# Get-SecretInfo -Vault `$Vaultname -Name MyFirstPassword"
+        "# Set-Secret -Verbose -Vault `$Vaultname -Secret `$myNewSecret -Name foo"
+        "# Set-Secret -Verbose -Vault `$Vaultname -Secret `$myNewSecret -Name Hubba"
+        "# Set-SecretInfo -Verbose -Vault `$Vaultname  -Name foo -Metadata @{Beschreibung='Notiz'}"
+        '# Set-Secret -Verbose -Vault $Vaultname -Secret $myNewCred -Name "NewFoo"') | ForEach-Object { Write-PSFMessage -Level Host $_ }
+} -onend {
+    Write-PSFMessage -Level Host "Removing all vaults which use a module named like '*MyWarden*'"
+    Get-SecretVault | Where-Object modulepath -like '*MyWarden*' | Unregister-SecretVault
+}
+```
+
+The main trick is the cmdlet `Enter-RSSession`. It starts a unique session which has some initialization done in the `-OnStart` scriptblock:
+
+- Determine the module path
+- Import the module
+- Register a new vault with the current module path
+- Initialize some helper variables and inform the user about them
+- Unlock the vault (**make sure to obtain a real unlock password in a secure manner**)
+- Start a Filewatcher
+
+The file watcher restarts the session automatically if a file is changed. So while developing start the script, make changes and the automatically restarted session will reflect it. Exiting the session (`Exit-RSSession`) will remove the previously registered test vaults.
+
+## Smaller workarounds
+The following chapters describe headaches but no nightmares.
+### Shared internal functions
+If you need an internal function available in the wrapper- and in the extension module simply put it into the `SecretManagement.þnameþ\SecretManagement.þnameþ\SecretManagement.þnameþ.Extension\functions.sharedinternal` folder.
+### Differentiate between installed module and development version
+If you use the supplied `Register-þfunctionPrefixþSecureVault` function for registering the vault it uses the name of the module if the current path hints to an installed version or the full path otherwise. This way you can use the specific version you are just developing or the general (and therefor latest) version of the installed module.
+
+### AdditionalParameters are provided case sensitive
+The `-AdditionalParameters` HashTable is delivered as a case sensitive HashTable ([issue 208](https://github.com/PowerShell/SecretManagement/issues/208)). As regular ones are not case sensitive and the user may configure the parameter `userName` or `username` it quickly leads to unexpected errors. In the demo code this is handled with
+```Powershell
+$AdditionalParameters = @{} + $AdditionalParameters
+```
 
 
 <!-- ROADMAP -->
@@ -163,8 +307,8 @@ Project Link: [https://github.com/Callidus2000/SecretManagement.ExtensionTemplat
 <!-- ACKNOWLEDGEMENTS -->
 # Acknowledgements
 
-* [Friedrich Weinmann](https://github.com/FriedrichWeinmann) for his marvelous [PSModuleDevelopment](https://github.com/PowershellFrameworkCollective/PSModuleDevelopment) and [psframework](https://github.com/PowershellFrameworkCollective/psframework)
-
+* [Friedrich Weinmann](https://github.com/FriedrichWeinmann) for his marvelous [PSModuleDevelopment](https://github.com/PowershellFrameworkCollective/PSModuleDevelopment) and [psframework](https://github.com/PowershellFrameworkCollective/psframework). My own extension and my template are build on base of his templates.
+* [mdgrs-mei](https://github.com/mdgrs-mei) for his invaluable [RestartableSession](https://github.com/mdgrs-mei/RestartableSession) module. Without it I'd never survived the debugging madness of the multi-runspace-model of SecretManagement itself. And that would have killed my module and this template directly in the beginning.
 
 
 

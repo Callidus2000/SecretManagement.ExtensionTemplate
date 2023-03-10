@@ -32,7 +32,7 @@
 			(Get-Module PSFramework).Version.ToString()
 		}
 		secretManagementVersion          = {
-			(Get-Module Microsoft.Powershell.SecretManagement).Version.ToString()
+			(Get-Module Microsoft.Powershell.SecretManagement -ListAvailable | Sort-Object -Property Version | Select-Object -last 1).Version.ToString()
 		}
 		testfolder   = {
 

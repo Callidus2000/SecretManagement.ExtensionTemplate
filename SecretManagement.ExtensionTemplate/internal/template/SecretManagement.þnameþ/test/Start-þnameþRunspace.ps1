@@ -14,7 +14,7 @@ $vaultsParameter = @{
         password  = ConvertTo-SecureString -AsPlainText -String "THIS_SHOULDBE_SWAPPED"  # Please use something else like 'Get-Credential' ;-)
     }
 }
-Write-Host "`$PSScriptRoot=$PSScriptRoot"
+Write-PSFMessage -Level Host "`$PSScriptRoot=$PSScriptRoot"
 # $PSScriptRoot has to be provided as a parameter as it's not available in the scriptblock
 Enter-RSSession -OnStartArgumentList @($vaultsParameter.$VaultConfig, $PSScriptRoot) -onstart {
     param($vaultParam,$PSSC)

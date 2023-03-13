@@ -75,7 +75,7 @@ if ($TestFunctions)
 {
 	Write-PSFMessage -Level Important -Message "Proceeding with individual tests"
 	Write-PSFMessage -Level Important -Message "Creating Dummy-Extension"
-	$testResultPath = (Get-Item -Path "$scriptRoot\..\..\TestResults").FullName
+	$testResultPath = (Get-Item -Path "$PSScriptRoot\..\..\TestResults").FullName
 	$modulePath = join-path $testResultPath "SecretManagement.PesterValidate" "SecretManagement.PesterValidate"
 	$vaultName = "TemplateTester"
 	$manifestPath = Join-Path $modulePath "SecretManagement.PesterValidate.psd1"

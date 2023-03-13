@@ -37,7 +37,7 @@
     # TODO Perform Retrieval voodoo ;-)
 
     #region Change this code against something useful/more secret
-    $secret=Get-PSFConfigValue -FullName "SecretManagement.þnameþ.DummyImplmentation.Secrets.$Name" -Fallback (ConvertTo-SecureString "Foo" -AsPlainText)
+    $secret=Get-PSFConfigValue -FullName "SecretManagement.þnameþ.DummyImplmentation.Secrets.$Name"
     #endregion Change this code against something useful/more secret
 
     # Example Code has to be removed!

@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Basic pester tests
   - General tests from PSModuleDevelopment
   - Functional tests by creating a Pester Test extension and trying basic functions on a derived vault
+- New Chapter 'Problems without workaround in the template'
 ## [1.1.2] - 2023-03-10
 ### Fixed
 - Workflow run

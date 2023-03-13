@@ -1,0 +1,53 @@
+name: BuildOnly
+on:
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        type: boolean
+        description: 'Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)'
+        required: false
+        default: false
+jobs:
+  BuildOnly:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    - name: Get ModuleName
+      run: |
+        $moduleName=Get-ChildItem -Directory |Where-Object {Test-Path (Join-Path $_ "$($_.name).psd1")}|Select-Object -ExpandProperty Name
+        echo "MODULENAME=$moduleName" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+        $psdModuleVersion=Import-PowerShellDataFile (Join-Path $moduleName "$moduleName.psd1")|Select-Object -ExpandProperty ModuleVersion
+        echo "PSD_MODULEVERSION=$psdModuleVersion" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+      shell: pwsh
+    - name: Query needed modules
+      id: getReqModules
+      shell: pwsh
+      run: |
+          "RequiredModules=$((Import-PowerShellDataFile "./$($env:MODULENAME)/$($env:MODULENAME).psd1").RequiredModules.modulename -join ',')" >> $env:GITHUB_OUTPUT
+          # (Import-PowerShellDataFile ./SecretManagement.ExtensionTemplate/SecretManagement.ExtensionTemplate.psd1).RequiredModules.modulename -join ','
+    - name: Install and cache PowerShell modules
+      id: psmodulecache
+      uses: potatoqualitee/psmodulecache@v5.2
+      with:
+        modules-to-cache: ${{ steps.getReqModules.outputs.RequiredModules }},ChangelogManagement,platyPS
+    - name: Validate
+      run: .\build\vsts-validate.ps1
+    - name: Build and publish
+      env:
+        APIKEY: ${{ secrets.ApiKey }}
+      if: ${{ env.APIKEY != '' }}
+      run: .\build\vsts-build.ps1 -ApiKey $env:APIKEY
+
+    - name: Setup tmate session
+      if: ${{ failure() || (github.event_name == 'workflow_dispatch' && inputs.debug_enabled ) }}
+      uses: mxschmitt/action-tmate@v3
+    # - name: Build
+    #   run: .\build\vsts-build.ps1 -ApiKey $env:APIKEY -Version ${{ steps.gitversion.outputs.SemVer }}
+    #   shell: pwsh
+    #   env:
+    #     APIKEY: ${{ secrets.ApiKey }}

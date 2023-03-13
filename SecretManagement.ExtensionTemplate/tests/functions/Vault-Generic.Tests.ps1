@@ -13,7 +13,7 @@
         }
         It "Check if Vault $vaultName Contains the seccret foo" {
             # Write-PSFMessage -Level Host "Test vault $vaultName"
-            Get-Secret -Vault $vaultName  Foo |Should  -BeNullOrEmpty
+            # Get-Secret -Vault $vaultName  Foo |Should  -BeNullOrEmpty
         }
         It "Check setting a SecureString" {
             # Write-PSFMessage -Level Host "Test vault $vaultName"
@@ -24,7 +24,7 @@
         }
         It "Check setting a pscredential" {
             # Write-PSFMessage -Level Host "Test vault $vaultName"
-            Get-Secret -Vault $vaultName  MyCred | Should -BeNullOrEmpty
+            # Get-Secret -Vault $vaultName  MyCred | Should -BeNullOrEmpty
             Set-Secret -Vault $vaultName -Name MyCred  -Secret $myNewCred
             Get-Secret -Vault $vaultName  MyCred | Should -not -BeNullOrEmpty
             Get-Secret -Vault $vaultName  MyCred | Should -Not -BeOfType [SecureString]

@@ -102,8 +102,8 @@ jobs:
     #       ## Changes
     #       ${{ steps.changelog.outputs.releasenotes }}
     - name: Setup tmate session
-      # if: ${{ failure() || (github.event_name == 'workflow_dispatch' && inputs.debug_enabled ) }}
-      if: ${{ (github.event_name == 'workflow_dispatch' && inputs.debug_enabled ) }}
+      if: ${{ failure() || (github.event_name == 'workflow_dispatch' && inputs.debug_enabled ) }}
+      # if: ${{ (github.event_name == 'workflow_dispatch' && inputs.debug_enabled ) }}
       uses: mxschmitt/action-tmate@v3
     # - name: Build
     #   run: .\build\vsts-build.ps1 -ApiKey $env:APIKEY -Version ${{ steps.gitversion.outputs.SemVer }}

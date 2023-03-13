@@ -12,7 +12,7 @@
 RootModule = 'SecretManagement.ExtensionTemplate.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.1.2'
+ModuleVersion = '1.2.0'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -51,8 +51,8 @@ PowerShellVersion = '5.0'
 # ProcessorArchitecture = ''
 
 # Modules that must be imported into the global environment prior to importing this module
-RequiredModules = @(@{ModuleName = 'RestartableSession'; ModuleVersion = '0.4.0'; }, 
-               @{ModuleName = 'PSFramework'; ModuleVersion = '1.7.249'; }, 
+RequiredModules = @(@{ModuleName = 'RestartableSession'; ModuleVersion = '0.4.0'; },
+               @{ModuleName = 'PSFramework'; ModuleVersion = '1.7.249'; },
                @{ModuleName = 'PSModuleDevelopment'; ModuleVersion = '2.2.11'; })
 
 # Assemblies that must be loaded prior to importing this module

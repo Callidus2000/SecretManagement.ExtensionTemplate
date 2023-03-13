@@ -56,6 +56,7 @@
         @{ModuleName = 'PSFramework'; ModuleVersion = '1.7.249'; },
         @{ModuleName = 'string'; ModuleVersion = '1.0.0'; },
         @{ModuleName = 'PSModuleDevelopment'; ModuleVersion = '2.2.11'; }
+        @{ModuleName = 'Microsoft.Powershell.SecretManagement'; ModuleVersion = '1.1.2'; }
         )
 
     # Assemblies that must be loaded prior to importing this module

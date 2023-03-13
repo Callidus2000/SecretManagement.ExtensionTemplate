@@ -262,7 +262,20 @@ The `-AdditionalParameters` HashTable is delivered as a case sensitive HashTable
 ```Powershell
 $AdditionalParameters = @{} + $AdditionalParameters
 ```
+## Problems without workaround in the template
+### Get-Secret: To Throw or Not To Throw
+In v1.2.0 I've added a pester test case which
+- Creates a SecretManagement.PesterValidate module
+- Adds a vault with this module
+- Performs small tests.
 
+Everything worked fine on my Windows Dev System, but the validation failed running in a GitHub action.
+`Get-Secret NotExistingName` behaves differently under Windows/Linux: running Windows it `returns $null`, running Linux it throws an exception.
+```Powershell
+Get-Secret -Vault $vaultName  Foo |Should -BeNullOrEmpty  # Works on Windows
+Get-Secret -Vault $vaultName  Foo |Should -Throw  # Works on Linux/Ubuntu
+{Get-Secret -Vault $vaultName  Foo -ErrorAction Stop} |Should  -Throw  # Works on both
+```
 
 <!-- ROADMAP -->
 # Roadmap

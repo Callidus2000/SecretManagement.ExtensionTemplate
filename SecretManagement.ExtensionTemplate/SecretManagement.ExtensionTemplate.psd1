@@ -12,7 +12,7 @@
 RootModule = 'SecretManagement.ExtensionTemplate.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.1.0'
+ModuleVersion = '1.1.2'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -30,7 +30,7 @@ CompanyName = 'MyCompany'
 Copyright = '(c) 2023 Sascha Spiekermann'
 
 # Description of the functionality provided by this module
-Description = 'No'
+Description = 'This module provides a template for easy creation of SecretManagement extensions'
 
 # Minimum version of the PowerShell engine required by this module
 PowerShellVersion = '5.0'
@@ -100,23 +100,17 @@ PrivateData = @{
         # Tags = @()
 
         # A URL to the license for this module.
-        # LicenseUri = ''
+        LicenseUri = 'https://github.com/Callidus2000/SecretManagement.ExtensionTemplate/blob/master/LICENSE'
 
         # A URL to the main website for this project.
-        # ProjectUri = ''
+        ProjectUri = 'https://github.com/Callidus2000/SecretManagement.ExtensionTemplate'
 
         # A URL to an icon representing this module.
         # IconUri = ''
 
         # ReleaseNotes of this module
-        ReleaseNotes = '### Added
-- test\Start-þnameþRunspace.ps1  
- Helper for starting a new runspace with the current development state
-- Working example code in basic functions
-- Added RestartableSession to the RequiredModules
-### Changed
-- Search''n''Replace of þnameþ against long versions
-- README.md expanded a lot'
+        ReleaseNotes = '### Fixed
+- Workflow run'
 
         # Prerelease string of this module
         # Prerelease = ''

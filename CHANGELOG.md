@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.2] - 2023-03-10
+### Fixed
+- Workflow run
+## [1.1.1] - 2023-03-10
+### Added
+- Metadata in manifest for gallery
 ## [1.1.0] - 2023-03-10
 ### Added
 - test\Start-þnameþRunspace.ps1  
@@ -29,7 +35,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - Configuration module names
 ## [1.0.0] - 2023-03-03
 First Release
-[Unreleased]: https://github.com/Callidus2000/SecretManagement.ExtensionTemplate/compare/v1.1.0..HEAD
+[Unreleased]: https://github.com/Callidus2000/SecretManagement.ExtensionTemplate/compare/v1.1.2..HEAD
+[1.1.2]: https://github.com/Callidus2000/SecretManagement.ExtensionTemplate/compare/v1.1.1..v1.1.2
+[1.1.1]: https://github.com/Callidus2000/SecretManagement.ExtensionTemplate/compare/v1.1.0..v1.1.1
 [1.1.0]: https://github.com/Callidus2000/SecretManagement.ExtensionTemplate/compare/v1.0.3..v1.1.0
 [1.0.3]: https://github.com/Callidus2000/SecretManagement.ExtensionTemplate/compare/v1.0.2..v1.0.3
 [1.0.2]: https://github.com/Callidus2000/SecretManagement.ExtensionTemplate/compare/v1.0.1..v1.0.2

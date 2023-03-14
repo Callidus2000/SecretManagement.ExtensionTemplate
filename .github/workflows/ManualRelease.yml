@@ -113,9 +113,9 @@ jobs:
     #       git pull
     #       git merge --no-ff ${{ github.head_ref	 }} -m "Auto-merge ${{ github.base_ref }} to ${{ github.head_ref	 }}"
     #       git push
-    # - name: Setup tmate session
-    #   if: ${{ failure() || (github.event_name == 'workflow_dispatch' && inputs.debug_enabled ) }}
-    #   uses: mxschmitt/action-tmate@v3
+    - name: Setup tmate session
+      if: ${{ failure() || (github.event_name == 'workflow_dispatch' && inputs.debug_enabled ) }}
+      uses: mxschmitt/action-tmate@v3
     # - name: Build
     #   run: .\build\vsts-build.ps1 -ApiKey $env:APIKEY -Version ${{ steps.gitversion.outputs.SemVer }}
     #   shell: pwsh

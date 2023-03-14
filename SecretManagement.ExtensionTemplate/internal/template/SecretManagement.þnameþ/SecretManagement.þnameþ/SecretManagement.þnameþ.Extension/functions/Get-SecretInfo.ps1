@@ -50,6 +50,17 @@
         $VaultName, # Name of vault
         $metaData)
     return $info
+
+    # Dupe Name Bug: If your vault supports multiple entries with the same name: Make them unique until
+    # issue 95 (https://github.com/PowerShell/SecretManagement/issues/95) is solved in a new release
+    # Build $tempList with the real infos and search for duplicate names
+    # $entriesWithDuplicateNames = $tempList | Group-Object -Property name | Where-Object count -gt 1
+    # foreach ($group in $entriesWithDuplicateNames) {
+    #     Write-PSFMessage "The Secret with the name $($group.Name) occurs $($group.Count) times, adding the GUID to the name"
+    #     foreach ($info in $group.Group) {
+    #         $info.name += " [$($info.id)]"
+    #     }
+    # }
     #endregion Change this code against something useful/more secret
 }
 

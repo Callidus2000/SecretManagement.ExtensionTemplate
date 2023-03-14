@@ -277,6 +277,43 @@ Get-Secret -Vault $vaultName  Foo |Should -Throw  # Works on Linux/Ubuntu
 {Get-Secret -Vault $vaultName  Foo -ErrorAction Stop} |Should  -Throw  # Works on both
 ```
 
+### Get-SecretInfo: "There may only be one" (per vault)
+It is mentioned in the docs that `Get-Secret` returns *one* secret at a time. Ok, its logical. `Get-SecretInfo` should return an array of `[SecretInformation]` objects. So the second one is meant e.g. for searching and the first for retrieving the main goods.
+
+If you've got multiple vaults which contain entries with the same name (simple test: Register the same vault twice under different names) `Get-SecretInfo` returns them all:
+
+```Powershell
+> Get-SecretInfo -Name hubba
+
+Name  Type         VaultName
+----  ----         ---------
+hubba PSCredential MyWardenDemo
+
+> Register-SecretVault -Name "$vaultName.2" -ModuleName $manifestPath
+> Get-SecretInfo -Name hubba
+
+Name  Type         VaultName
+----  ----         ---------
+hubba PSCredential MyWardenDemo
+hubba PSCredential MyWardenDemo.2
+```
+
+But what happens if your vault supports multiple secrets with the same name? Maybe side-by-side or contained in different folders?  Then `Get-SecretInfo` has a bad day and does not return anything.
+```Powershell
+> Get-SecretInfo -Vault MyWardenDemo -Name foo
+Get-SecretInfo: An item with the same key has already been added. Key: [Foo, Microsoft.PowerShell.SecretManagement.SecretInformation]
+```
+This is filed as [issue 95](https://github.com/PowerShell/SecretManagement/issues/95) since 2021. If your vault is able to store multiple entries with the same name you will most likely need a workaround for it. In my Netwrix module I've added the ID of each entry to the name if the name occurs multiple times. The ID can be used for retrieval, too.
+```Powershell
+# Build $tempList with the real infos and search for duplicate names
+$entriesWithDuplicateNames = $tempList | Group-Object -Property name | Where-Object count -gt 1
+foreach ($group in $entriesWithDuplicateNames) {
+    Write-PSFMessage "The Secret with the name $($group.Name) occurs $($group.Count) times, adding the GUID to the name"
+    foreach ($info in $group.Group) {
+        $info.name += " [$($info.id)]"
+    }
+}
+```
 <!-- ROADMAP -->
 # Roadmap
 New features/changes will be added if somebody needs it or stumbles over a bug.

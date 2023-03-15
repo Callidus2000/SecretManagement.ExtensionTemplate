@@ -45,7 +45,7 @@ jobs:
           # (Import-PowerShellDataFile ./SecretManagement.ExtensionTemplate/SecretManagement.ExtensionTemplate.psd1).RequiredModules.modulename -join ','
     - name: Install and cache PowerShell modules
       id: psmodulecache
-      uses: potatoqualitee/psmodulecache@v5.2
+      uses: potatoqualitee/psmodulecache@main
       with:
         modules-to-cache: ${{ steps.getReqModules.outputs.RequiredModules }},ChangelogManagement
     # - name: Make sure modules are installed

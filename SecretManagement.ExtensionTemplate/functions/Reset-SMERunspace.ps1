@@ -16,6 +16,7 @@
     https://github.com/PowerShell/SecretManagement/issues/206#issuecomment-1469306985
     #>
     [CmdletBinding()]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '')]
     param (
 
     )

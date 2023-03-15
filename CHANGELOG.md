@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [1.3.0] - 2023-03-15
 ### Added
 - Readme: Alternative: Get Rid of the SecretManagement - FAST
 - Function Reset-SMERunspace for resetting the runspace of SecretManagement
@@ -46,7 +48,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - Configuration module names
 ## [1.0.0] - 2023-03-03
 First Release
-[Unreleased]: https://github.com/Callidus2000/SecretManagement.ExtensionTemplate/compare/v1.2.1..HEAD
+[Unreleased]: https://github.com/Callidus2000/SecretManagement.ExtensionTemplate/compare/v1.3.0..HEAD
+[1.3.0]: https://github.com/Callidus2000/SecretManagement.ExtensionTemplate/compare/v1.2.1..v1.3.0
 [1.2.1]: https://github.com/Callidus2000/SecretManagement.ExtensionTemplate/compare/v1.2.0..v1.2.1
 [1.2.0]: https://github.com/Callidus2000/SecretManagement.ExtensionTemplate/compare/v1.1.2..v1.2.0
 [1.1.2]: https://github.com/Callidus2000/SecretManagement.ExtensionTemplate/compare/v1.1.1..v1.1.2

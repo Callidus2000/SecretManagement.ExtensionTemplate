@@ -49,10 +49,10 @@ jobs:
       id: psmodulecache
       uses: potatoqualitee/psmodulecache@v5.2
       with:
-        modules-to-cache: ${{ steps.getReqModules.outputs.RequiredModules }},ChangelogManagement,platyPS
+        modules-to-cache: ${{ steps.getReqModules.outputs.RequiredModules }},ChangelogManagement
     - name: Make sure modules are installed
       run: |
-        Install-Module ${{ steps.getReqModules.outputs.RequiredModules }},ChangelogManagement,platyPS -Force -SkipPublisherCheck
+        Install-Module ${{ steps.getReqModules.outputs.RequiredModules }},ChangelogManagement -Force -SkipPublisherCheck
     - name: Validate
       run: .\build\vsts-validate.ps1
     - name: Update Changelog

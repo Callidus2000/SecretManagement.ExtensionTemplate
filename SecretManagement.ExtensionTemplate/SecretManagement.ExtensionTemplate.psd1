@@ -12,7 +12,7 @@
 RootModule = 'SecretManagement.ExtensionTemplate.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.2.1'
+ModuleVersion = '1.3.0'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -51,10 +51,10 @@ PowerShellVersion = '5.0'
 # ProcessorArchitecture = ''
 
 # Modules that must be imported into the global environment prior to importing this module
-RequiredModules = @(@{ModuleName = 'RestartableSession'; ModuleVersion = '0.4.0'; }, 
-               @{ModuleName = 'PSFramework'; ModuleVersion = '1.7.249'; }, 
-               @{ModuleName = 'string'; ModuleVersion = '1.0.0'; }, 
-               @{ModuleName = 'PSModuleDevelopment'; ModuleVersion = '2.2.11'; }, 
+RequiredModules = @(@{ModuleName = 'RestartableSession'; ModuleVersion = '0.4.0'; },
+               @{ModuleName = 'PSFramework'; ModuleVersion = '1.7.249'; },
+               @{ModuleName = 'string'; ModuleVersion = '1.0.0'; },
+               @{ModuleName = 'PSModuleDevelopment'; ModuleVersion = '2.2.11'; },
                @{ModuleName = 'Microsoft.Powershell.SecretManagement'; ModuleVersion = '1.1.2'; })
 
 # Assemblies that must be loaded prior to importing this module
@@ -73,7 +73,10 @@ RequiredModules = @(@{ModuleName = 'RestartableSession'; ModuleVersion = '0.4.0'
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = 'Invoke-SMETemplate'
+FunctionsToExport = @(
+    'Invoke-SMETemplate'
+    'Reset-SMERunspace'
+    )
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = @()

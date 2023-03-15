@@ -172,7 +172,7 @@ Import-Module MyModule.psd1 -Force
 ```
 As the vaults are configured with the path to the extension module and are contained in a different runspace, `Import-Module -Force` does not do the trick. You would need to start a new session and start all the initialization again. That's a black whole for workforce time...
 
-That is where the `RestartableSession` module comes to the rescue. If you're e.g. creating an extension for 'MyWarden' the following file is created:
+That is where the `RestartableSession` module comes to the rescue (another way to achieve it is described below as [Get Rid of the SecretManagement - FAST](#alternative-get-rid-of-the-secretmanagement---fast)). If you're e.g. creating an extension for 'MyWarden' the following file is created:
 ```Powershell
 #SecretManagement.MyWarden\test\Start-MyWardenRunspace.ps1
 
@@ -249,6 +249,21 @@ The main trick is the cmdlet `Enter-RSSession`. It starts a unique session which
 - Start a Filewatcher
 
 The file watcher restarts the session automatically if a file is changed. So while developing start the script, make changes and the automatically restarted session will reflect it. Exiting the session (`Exit-RSSession`) will remove the previously registered test vaults.
+
+### Alternative: Get Rid of the SecretManagement - FAST
+I've opened [issue 206](https://github.com/PowerShell/SecretManagement/issues/206) regarding the runspace problem and got a brilliant alternative by [llewellyn-marriott](https://github.com/llewellyn-marriott) for my [Importing again is not enough](#importing-again-is-not-enough) problem. The following code finds the used runspace and kills it:
+```Powershell
+# Get the runspace field
+$RunspaceField = (([Microsoft.PowerShell.SecretManagement.SecretVaultInfo].Assembly.GetTypes() | Where-Object Name -eq 'PowerShellInvoker').DeclaredFields | Where-Object Name -eq '_runspace')
+# Get current runspace value and dispose of it
+$RunspaceValue = $RunspaceField.GetValue($null)
+if($NULL -ne $RunspaceValue) {
+    $RunspaceValue.Dispose()
+}
+# Set the runspace field to null
+$RunspaceField.SetValue($null, $null)
+```
+It may have side effects (like killing SecretManagement runspace and therefor all vault states (you need e.g. to unlock them again)) but it does the job and needs milliseconds instead of multiple seconds. That trick is *fast*.
 
 ## Smaller workarounds
 The following chapters describe headaches but no nightmares.
@@ -359,6 +374,7 @@ Project Link: [https://github.com/Callidus2000/SecretManagement.ExtensionTemplat
 
 * [Friedrich Weinmann](https://github.com/FriedrichWeinmann) for his marvelous [PSModuleDevelopment](https://github.com/PowershellFrameworkCollective/PSModuleDevelopment) and [psframework](https://github.com/PowershellFrameworkCollective/psframework). My own extension and my template are build on base of his templates.
 * [mdgrs-mei](https://github.com/mdgrs-mei) for his invaluable [RestartableSession](https://github.com/mdgrs-mei/RestartableSession) module. Without it I'd never survived the debugging madness of the multi-runspace-model of SecretManagement itself. And that would have killed my module and this template directly in the beginning.
+* [llewellyn-marriott](https://github.com/llewellyn-marriott) for the code for `Reset-SMERunspace`.
 
 
 

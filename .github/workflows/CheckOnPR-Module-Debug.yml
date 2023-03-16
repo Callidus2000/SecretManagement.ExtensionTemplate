@@ -22,7 +22,7 @@ jobs:
       id: psmodulecache
       uses: potatoqualitee/psmodulecache@main
       with:
-        modules-to-cache: RestartableSession,PSFramework,PSModuleDevelopment,Microsoft.Powershell.SecretManagement,string,ChangelogManagement
+        modules-to-cache: RestartableSession,PSFramework,string,PSModuleDevelopment,Microsoft.Powershell.SecretManagement,ChangelogManagement
         updatable: "false"
     - name: Get required modules on Windows PowerShell
       shell: pwsh

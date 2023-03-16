@@ -93,9 +93,9 @@ jobs:
       uses: devmasx/merge-branch@master
       with:
         type: now
-        from_branch: ${{ github.head_ref }}
+        from_branch: development
         # target_branch: master
-        target_branch: ${{ github.base_ref }}
+        target_branch: master
         github_token: ${{ github.token }}
     - name: Build and publish
       env:

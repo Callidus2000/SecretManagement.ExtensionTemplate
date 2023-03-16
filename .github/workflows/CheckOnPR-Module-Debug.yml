@@ -47,7 +47,8 @@ jobs:
       id: psmodulecache
       uses: potatoqualitee/psmodulecache@main
       with:
-        modules-to-cache: ${{ steps.getReqModules.outputs.RequiredModules }},ChangelogManagement
+        modules-to-cache: string,RestartableSession,ChangelogManagement,PSFramework,PSModuleDevelopment,Microsoft.Powershell.SecretManagement
+        # modules-to-cache: ${{ steps.getReqModules.outputs.RequiredModules }},ChangelogManagement
     # - name: Make sure modules are installed
     #   run: |
     #     Install-Module ${{ steps.getReqModules.outputs.RequiredModules }},ChangelogManagement -Force -SkipPublisherCheck

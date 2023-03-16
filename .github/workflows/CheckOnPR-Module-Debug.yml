@@ -20,36 +20,44 @@ jobs:
     - uses: actions/checkout@v3
       with:
         fetch-depth: 0
-    - name: Install GitVersion
-      uses: gittools/actions/gitversion/setup@v0.9.15
-      with:
-        versionSpec: '5.x'
-    - name: Get ModuleName
-      run: |
-        $moduleName=Get-ChildItem -Directory |Where-Object {Test-Path (Join-Path $_ "$($_.name).psd1")}|Select-Object -ExpandProperty Name
-        echo "MODULENAME=$moduleName" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
-        $psdModuleVersion=Import-PowerShellDataFile (Join-Path $moduleName "$moduleName.psd1")|Select-Object -ExpandProperty ModuleVersion
-        echo "PSD_MODULEVERSION=$psdModuleVersion" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
-    - name: Determine Version
-      id: gitversion
-      uses: gittools/actions/gitversion/execute@v0.9.15
-      with:
-        additionalArguments: /overrideconfig next-version=${{env.PSD_MODULEVERSION}}
-    - name: Print Environment
-      uses: managedkaos/print-env@master
-    - name: Query needed modules
-      id: getReqModules
-      shell: pwsh
-      run: |
-          "RequiredModules=$((Import-PowerShellDataFile "./$($env:MODULENAME)/$($env:MODULENAME).psd1").RequiredModules.modulename -join ',')" >> $env:GITHUB_OUTPUT
-          # (Import-PowerShellDataFile ./SecretManagement.ExtensionTemplate/SecretManagement.ExtensionTemplate.psd1).RequiredModules.modulename -join ','
+    # - name: Install GitVersion
+    #   uses: gittools/actions/gitversion/setup@v0.9.15
+    #   with:
+    #     versionSpec: '5.x'
+    # - name: Get ModuleName
+    #   run: |
+    #     $moduleName=Get-ChildItem -Directory |Where-Object {Test-Path (Join-Path $_ "$($_.name).psd1")}|Select-Object -ExpandProperty Name
+    #     echo "MODULENAME=$moduleName" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+    #     $psdModuleVersion=Import-PowerShellDataFile (Join-Path $moduleName "$moduleName.psd1")|Select-Object -ExpandProperty ModuleVersion
+    #     echo "PSD_MODULEVERSION=$psdModuleVersion" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+    # - name: Determine Version
+    #   id: gitversion
+    #   uses: gittools/actions/gitversion/execute@v0.9.15
+    #   with:
+    #     additionalArguments: /overrideconfig next-version=${{env.PSD_MODULEVERSION}}
+    # - name: Print Environment
+    #   uses: managedkaos/print-env@master
+    # - name: Query needed modules
+    #   id: getReqModules
+    #   shell: pwsh
+    #   run: |
+    #       "RequiredModules=$((Import-PowerShellDataFile "./$($env:MODULENAME)/$($env:MODULENAME).psd1").RequiredModules.modulename -join ',')" >> $env:GITHUB_OUTPUT
+    #       # (Import-PowerShellDataFile ./SecretManagement.ExtensionTemplate/SecretManagement.ExtensionTemplate.psd1).RequiredModules.modulename -join ','
     - name: Install and cache PowerShell modules
       id: psmodulecache
       uses: potatoqualitee/psmodulecache@main
       with:
-        modules-to-cache: string,RestartableSession,ChangelogManagement,PSFramework,PSModuleDevelopment,Microsoft.Powershell.SecretManagement
+        modules-to-cache: RestartableSession,PSFramework,PSModuleDevelopment,Microsoft.Powershell.SecretManagement,string,ChangelogManagement
         # modules-to-cache: ${{ steps.getReqModules.outputs.RequiredModules }},ChangelogManagement
-    # - name: Make sure modules are installed
+        # updatable: "false"
+    - name: Get required modules on Windows PowerShell
+      shell: pwsh
+      run: |
+        'RestartableSession','PSFramework','string','PSModuleDevelopment','Microsoft.Powershell.SecretManagement','ChangelogManagement'|
+        foreach {
+            # Import-Module $_
+            Write-Host "$_ '$(Get-Module $_ -ListAvailabLe|Select-Object Name,Version,@{Name='PreRelease';e={$_.PrivateData.PSData.Prerelease}},RepositorySourceLocation)'"
+        }    # - name: Make sure modules are installed
     #   run: |
     #     Install-Module ${{ steps.getReqModules.outputs.RequiredModules }},ChangelogManagement -Force -SkipPublisherCheck
     - name: Validate
@@ -60,20 +68,20 @@ jobs:
     #   with:
     #     mode: release
     #     releaseVersion: ${{ steps.gitversion.outputs.SemVer }}
-    - name: Update PowerShell Metadata
-      run: |
-        $updateParam=@{
-          path= (Join-Path (Get-Location).path "${{ env.MODULENAME }}" "${{ env.MODULENAME }}.psd1")
-          moduleVersion="${{ steps.gitversion.outputs.MajorMinorPatch }}"
-          copyright="(c) $(Get-Date -Format 'yyyy') Sascha Spiekermann"
-          releaseNotes= "${{ steps.changelog.outputs.releasenotes }}"
-          # functionsToExportPath: src\public
-          description= "${{ steps.metadata.outputs.description }}"
-        }
-        @($updateParam.keys) | Foreach-Object { 
-          if (-not $updateParam[$_]) { $updateParam.Remove($_) } 
-        }
-        Update-ModuleManifest @updateParam
+    # - name: Update PowerShell Metadata
+    #   run: |
+    #     $updateParam=@{
+    #       path= (Join-Path (Get-Location).path "${{ env.MODULENAME }}" "${{ env.MODULENAME }}.psd1")
+    #       moduleVersion="${{ steps.gitversion.outputs.MajorMinorPatch }}"
+    #       copyright="(c) $(Get-Date -Format 'yyyy') Sascha Spiekermann"
+    #       releaseNotes= "${{ steps.changelog.outputs.releasenotes }}"
+    #       # functionsToExportPath: src\public
+    #       description= "${{ steps.metadata.outputs.description }}"
+    #     }
+    #     @($updateParam.keys) | Foreach-Object { 
+    #       if (-not $updateParam[$_]) { $updateParam.Remove($_) } 
+    #     }
+    #     Update-ModuleManifest @updateParam
     # - name: Update PowerShell Metadata
     #   uses: natescherer/update-powershell-metadata-action@v2
     #   with:

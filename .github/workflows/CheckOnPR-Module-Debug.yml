@@ -15,23 +15,20 @@ jobs:
       run:
         shell: pwsh
     steps:
-    - uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
     - name: Install and cache PowerShell modules
       id: psmodulecache
       uses: potatoqualitee/psmodulecache@main
       with:
         modules-to-cache: RestartableSession,PSFramework,string,PSModuleDevelopment,Microsoft.Powershell.SecretManagement,ChangelogManagement
         updatable: "false"
-    - name: Get required modules on Windows PowerShell
+    - name: Make sure modules are installed
       shell: pwsh
       run: |
         'RestartableSession','PSFramework','string','PSModuleDevelopment','Microsoft.Powershell.SecretManagement','ChangelogManagement'|
         foreach {
-            # Import-Module $_
             Write-Host "$_ '$(Get-Module $_ -ListAvailabLe|Select-Object Name,Version,@{Name='PreRelease';e={$_.PrivateData.PSData.Prerelease}},RepositorySourceLocation)'"
-        }    # - name: Make sure modules are installed
+            Import-Module $_
+        } 
     - name: Setup tmate session
       # if: ${{ failure() || (github.event_name == 'workflow_dispatch' && inputs.debug_enabled ) }}
       if: ${{ (github.event_name == 'workflow_dispatch' && inputs.debug_enabled ) }}

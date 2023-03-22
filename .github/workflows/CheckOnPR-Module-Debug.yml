@@ -19,7 +19,7 @@ jobs:
       id: psmodulecache
       uses: potatoqualitee/psmodulecache@main
       with:
-        modules-to-cache: RestartableSession,PSFramework,string,PSModuleDevelopment,Microsoft.Powershell.SecretManagement,ChangelogManagement
+        modules-to-cache: RestartableSession,PSFramework,string,PSModuleDevelopment,Microsoft.PowerShell.SecretManagement,ChangelogManagement
         updatable: "false"
         shell: powershell,pwsh
     - name: Make sure modules are installed
